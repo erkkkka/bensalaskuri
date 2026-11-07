@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#101a22">
+    <title>Bensa laskuri</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        :root {
+            color-scheme: dark;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #6eec07;
+            color: #f3f6f2;
+            font-synthesis: none;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: grid;
+            place-items: center;
+            padding: 32px 18px;
+            background:
+                radial-gradient(ellipse at 12% 18%, rgb(167 243 70 / 12%), transparent 32%),
+                radial-gradient(ellipse at 90% 82%, rgba(90, 133, 123, 0.13), transparent 32%),
+                #11291a;
+        }
+
+        .calculator {
+            position: relative;
+            isolation: isolate;
+            width: min(100%, 480px);
+            overflow: hidden;
+            padding: 38px;
+            border: 1px solid rgba(87, 31, 31, 0.1);
+            border-radius: 28px;
+            background: linear-gradient(145deg, #486652, #19252d 70%);
+            box-shadow: 0 28px 80px rgb(0 0 0 / 35%);
+        }
+
+        .calculator::before {
+            position: absolute;
+            z-index: -1;
+            top: -105px;
+            right: -85px;
+            width: 240px;
+            height: 240px;
+            border: 1px solid rgb(183 255 95 / 16%);
+            border-radius: 50%;
+            box-shadow: 0 0 0 28px rgb(183 255 95 / 3%), 0 0 0 58px rgb(183 255 95 / 2%);
+            content: "";
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 15px;
+            color: #5cac60;
+            font-size: 0.75rem;
+            font-weight: 750;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .eyebrow span {
+            font-size: 1.15rem;
+            letter-spacing: 0;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(2rem, 8vw, 2.7rem);
+            letter-spacing: -0.055em;
+            line-height: 1.05;
+        }
+
+        .intro {
+            margin: 12px 0 30px;
+            color: #aab8bc;
+            font-size: 0.98rem;
+            line-height: 1.55;
+        }
+
+        .fields {
+            display: grid;
+            gap: 19px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #dce5e2;
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+
+        .input-wrap {
+            display: flex;
+            align-items: center;
+            border: 1px solid #3c4b51;
+            border-radius: 13px;
+            background: #152128;
+            transition: border-color 160ms ease, box-shadow 160ms ease;
+        }
+
+        .input-wrap:focus-within {
+            border-color: #0eb2e4;
+            box-shadow: 0 0 0 3px rgb(183 255 95 / 13%);
+        }
+
+        input {
+            width: 100%;
+            min-width: 0;
+            padding: 14px 15px;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: #f3f6f2;
+            font: inherit;
+            font-size: 1rem;
+        }
+
+        input::placeholder {
+            color: #718187;
+        }
+
+        .unit {
+            padding: 0 15px 0 5px;
+            color: #85969a;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 15px 18px;
+            border: 0;
+            border-radius: 13px;
+            background: #233310;
+            color: #20f504;
+            cursor: pointer;
+            font: inherit;
+            font-size: 1rem;
+            font-weight: 750;
+            transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            background: #c8ff85;
+            box-shadow: 0 9px 24px rgb(183 255 95 / 18%);
+        }
+
+        button:focus-visible {
+            outline: 3px solid #f3f6f2;
+            outline-offset: 3px;
+        }
+
+        #result {
+            min-height: 0;
+        }
+
+        #result:not(:empty) {
+            margin-top: 20px;
+            padding: 17px 18px;
+            border: 1px solid rgb(183 255 95 / 22%);
+            border-radius: 13px;
+            background: rgb(183 255 95 / 7%);
+            color: #eaf3e4;
+            line-height: 1.5;
+        }
+
+        #result p {
+            margin: 0;
+        }
+
+        #result strong {
+            display: block;
+            margin-top: 4px;
+            color: #fffffe;
+            font-size: 1.65rem;
+            letter-spacing: -0.03em;
+        }
+
+        #result.error {
+            border-color: rgb(255 133 133 / 28%);
+            background: rgb(255 133 133 / 8%);
+            color: #ffb0a8;
+        }
+
+        @media (max-width: 520px) {
+            .calculator {
+                padding: 30px 24px;
+                border-radius: 22px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="calculator">
+        <p class="eyebrow"><span aria-hidden="true">⛽</span> Polttoainekulut</p>
+        <h1>Polttoainelaskuri</h1>
+        <p class="intro">Laske polttoainekulut näppärästi ilman matemaattisia taitoja.</p>
+
+        <div class="fields">
+            <div>
+                <label for="distance">Matka</label>
+                <div class="input-wrap">
+                    <input type="number" id="distance" name="distance" min="0" step="any" placeholder="Esim. 250" inputmode="decimal">
+                    <span class="unit">km</span>
+                </div>
+            </div>
+
+            <div>
+                <label for="price">Polttoaineen hinta</label>
+                <div class="input-wrap">
+                    <input type="number" id="price" name="price" min="0" step="0.01" placeholder="Esim. 1,85" inputmode="decimal">
+                    <span class="unit">€/l</span>
+                </div>
+            </div>
+
+            <div>
+                <label for="average">Keskikulutus</label>
+                <div class="input-wrap">
+                    <input type="number" id="average" name="average" min="0" step="0.1" placeholder="Esim. 6,5" inputmode="decimal">
+                    <span class="unit">l / 100 km</span>
+                </div>
+            </div>
+        </div>
+
+        <button id="calculate" type="button">Laske matkan hinta <span aria-hidden="true">→</span></button>
+        <div id="result" aria-live="polite"></div>
+    </main>
+
+    <script>
+        const button = document.getElementById("calculate");
+        const resultDiv = document.getElementById("result");
+
+        button.addEventListener("click", function() {
+            const distance = parseFloat(document.getElementById("distance").value);
+            const price = parseFloat(document.getElementById("price").value);
+            const average = parseFloat(document.getElementById("average").value);
+
+            if (isNaN(distance) || isNaN(price) || isNaN(average)) {
+                resultDiv.className = "error";
+                resultDiv.innerHTML = "<p>Täytä kaikki kentät numeroilla.</p>";
+                return;
+            }
+
+            const consumedLiters = (distance / 100) * average;
+            const totalCost = consumedLiters * price;
+
+            resultDiv.className = "";
+            resultDiv.innerHTML = `<p>Matkan hinnaksi tulee:<strong>${totalCost.toFixed(2)} €</strong></p>`;
+        });
+    </script>
+</body>
+</html>
