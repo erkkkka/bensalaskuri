@@ -1,0 +1,31 @@
+        .split-costs {
+            margin-top: 20px;
+        }
+
+        .split-costs summary {
+            color: #dce5e2;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            list-style: none; /* Piilottaa selaimen oletusnuolen */
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .split-costs summary::-webkit-details-marker {
+            display: none; /* Safarin oletusnuolen piilotus */
+        }
+
+        /* Oma vihreä nuoli, joka kääntyy avatessa */
+        .split-costs summary::before {
+            content: "▼";
+            font-size: 0.7rem;
+            color: #5cac60;
+            transition: transform 0.2s ease;
+        }
+
+        .split-costs[open] summary::before {
+            transform: rotate(-180deg);
+        }

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#101a22">
     <title>Bensalaskuri</title>
+    <link rel="stylesheet" href="sivu.css">
     <link rel="manifest" href="manifest.json">
     <style>
         :root {
@@ -243,12 +244,26 @@
                 </div>
             </div>
         </div>
+                <!-- Tämä tulee aiemman </div>-tagin ja Laske-painikkeen väliin -->
+        <details class="split-costs">
+            <summary>Jaa bensakulut maksajien kesken</summary>
+            <div class="fields" style="margin-top: 15px;">
+                <div>
+                    <label for="payers">Maksajien lukumäärä</label>
+                    <div class="input-wrap">
+                        <input type="number" id="payers" name="payers" min="1" step="1" value="1" placeholder="Esim. 2" inputmode="numeric">
+                        <span class="unit">hlö</span>
+                    </div>
+                </div>
+            </div>
+        </details>
+
 
         <button id="calculate" type="button">Laske matkan hinta <span aria-hidden="true">→</span></button>
         <div id="result" aria-live="polite"></div>
     </main>
 
-    <script>
+        <script>
         const button = document.getElementById("calculate");
         const resultDiv = document.getElementById("result");
 
@@ -256,6 +271,12 @@
             const distance = parseFloat(document.getElementById("distance").value);
             const price = parseFloat(document.getElementById("price").value);
             const average = parseFloat(document.getElementById("average").value);
+            
+            // Haetaan maksajien määrä. Jos kenttä on tyhjä tai alle 1, oletuksena on 1 maksaja.
+            let payers = parseInt(document.getElementById("payers").value);
+            if (isNaN(payers) || payers < 1) {
+                payers = 1;
+            }
 
             if (isNaN(distance) || isNaN(price) || isNaN(average)) {
                 resultDiv.className = "error";
@@ -265,10 +286,22 @@
 
             const consumedLiters = (distance / 100) * average;
             const totalCost = consumedLiters * price;
+            const costPerPerson = totalCost / payers;
 
             resultDiv.className = "";
-            resultDiv.innerHTML = `<p>Matkan hinnaksi tulee:<strong>${totalCost.toFixed(2)} €</strong></p>`;
+            
+            // Jos vain 1 maksaja, näytetään normaali lopputulos. Muuten näytetään jako.
+            if (payers === 1) {
+                resultDiv.innerHTML = `<p>Matkan hinnaksi tulee:<strong>${totalCost.toFixed(2)} €</strong></p>`;
+            } else {
+                resultDiv.innerHTML = `
+                    <p>Matkan kokonaishinta:<strong>${totalCost.toFixed(2)} €</strong></p>
+                    <p style="margin-top: 14px; font-size: 0.9rem; color: #aab8bc;">Jokaiselle maksettavaa:</p>
+                    <strong>${costPerPerson.toFixed(2)} € / henkilö</strong>
+                `;
+            }
         });
     </script>
+
 </body>
 </html>
