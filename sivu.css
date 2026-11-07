@@ -7,7 +7,7 @@
             font-size: 0.9rem;
             font-weight: 700;
             cursor: pointer;
-            list-style: none; /* Piilottaa selaimen oletusnuolen */
+            list-style: none; 
             padding: 10px 0;
             display: flex;
             align-items: center;
@@ -15,10 +15,10 @@
         }
 
         .split-costs summary::-webkit-details-marker {
-            display: none; /* Safarin oletusnuolen piilotus */
+            display: none; 
         }
 
-        /* Oma vihreä nuoli, joka kääntyy avatessa */
+   
         .split-costs summary::before {
             content: "▼";
             font-size: 0.7rem;
